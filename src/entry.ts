@@ -9,7 +9,7 @@ program
     .version('0.0.1')
     .option('-v, --verbose', 'Log details')
     .option('-f, --force', 'Overwrite lockfile')
-    .option('-d, --dev', 'Include devDependencies')
+    .option('-d, --dev [dev]', 'Include devDependencies', false)
     .option('-w, --write [write]', 'Write lockfile')
     .option('-p, --package [package]', 'package.json path')
     .option('-l, --lockfile [lockfile]', 'yarn.lock path')
@@ -20,7 +20,7 @@ if (!program.package || !program.lockfile) {
     program.help()
 }
 
-const log = (message?: any, ...optional: any[]) => (program.verbose ? console.log(message, ...optional) : null)
+const log = (message?: any, ...optional: any[]) => (program.verbose ? console.debug(message, ...optional) : null)
 
 try {
     log(chalk.whiteBright('Lockfile:'), chalk.green(program.lockfile))
@@ -35,7 +35,7 @@ try {
             for (const found of Object.keys(parsedLockfile).filter((x) => x.startsWith(key))) {
                 const v = parsedLockfile[found]
                 if (semver.satisfies(v.version, dependencies[key])) {
-                    log(chalk.whiteBright('Satified version:'), chalk.cyan(key), chalk.blue(v.version), chalk.green(dependencies[key]))
+                    log(chalk.whiteBright('Satisfies version:'), chalk.cyan(key), chalk.blue(v.version), chalk.green(dependencies[key]))
                     const versionKey = `${key}@${dependencies[key]}`
 
                     if (versionKey in deps) {
@@ -55,7 +55,7 @@ try {
         return deps
     }
 
-    console.log('Using dev:', program.dev)
+    log('Using dev:', chalk.cyan(program.dev))
     const lockfileObject = gen(
         { ...inputPackageJson.dependencies, ...(program.dev ? inputPackageJson.devDependencies : {}) },
         inputLockfile.object
