@@ -4,9 +4,10 @@ import * as lock from '@yarnpkg/lockfile'
 import chalk from 'chalk'
 import semver from 'semver'
 import program from 'commander-plus'
+import pkg from '../package.json'
 
 program
-    .version('0.0.1')
+    .version(pkg.version)
     .option('-v, --verbose', 'Log details')
     .option('-f, --force', 'Overwrite lockfile')
     .option('-d, --dev [dev]', 'Include devDependencies', false)

@@ -1,3 +1,2 @@
 #!/usr/bin/env node
-import './entry'
-
+require('./entry')
