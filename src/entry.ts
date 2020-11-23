@@ -23,6 +23,31 @@ if (!program.package || !program.lockfile) {
 
 const log = (message?: any, ...optional: any[]) => (program.verbose ? console.debug(message, ...optional) : null)
 
+const generateLockfileObject = (dependencies: { [k: string]: string }, parsedLockfile: object, foundDependencies: object = {}) => {
+    for (const key of Object.keys(dependencies)) {
+        for (const found of Object.keys(parsedLockfile).filter((x) => x.startsWith(key))) {
+            const v = parsedLockfile[found]
+            if (semver.satisfies(v.version, dependencies[key])) {
+                log(chalk.whiteBright('Satisfies version:'), chalk.cyan(key), chalk.blue(v.version), chalk.green(dependencies[key]))
+                const versionKey = `${key}@${dependencies[key]}`
+
+                if (versionKey in foundDependencies) {
+                    log(chalk.yellow('Dependency already resolved'), chalk.blue(versionKey))
+                    // break early
+                    continue
+                }
+
+                foundDependencies[versionKey] = v
+
+                if (v.dependencies || v.optionalDependencies) {
+                    generateLockfileObject({ ...v.dependencies, ...v.optionalDependencies }, parsedLockfile, foundDependencies)
+                }
+            }
+        }
+    }
+    return foundDependencies
+}
+
 try {
     log(chalk.whiteBright('Lockfile:'), chalk.green(program.lockfile))
     log(chalk.whiteBright('Package.json:'), chalk.green(program.package))
@@ -31,36 +56,12 @@ try {
     const inputLockfile = lock.parse(lockfileString)
     const inputPackageJson = JSON.parse(fs.readFileSync(path.resolve(program.package), 'utf8'))
 
-    const gen = (dependencies: { [k: string]: string }, parsedLockfile: object, deps: object = {}) => {
-        for (const key of Object.keys(dependencies)) {
-            for (const found of Object.keys(parsedLockfile).filter((x) => x.startsWith(key))) {
-                const v = parsedLockfile[found]
-                if (semver.satisfies(v.version, dependencies[key])) {
-                    log(chalk.whiteBright('Satisfies version:'), chalk.cyan(key), chalk.blue(v.version), chalk.green(dependencies[key]))
-                    const versionKey = `${key}@${dependencies[key]}`
-
-                    if (versionKey in deps) {
-                        log(chalk.yellow('Dependency already resolved'), chalk.blue(versionKey))
-                        // break early
-                        continue
-                    }
-
-                    deps[versionKey] = v
-
-                    if (v.dependencies || v.optionalDependencies) {
-                        gen({ ...v.dependencies, ...v.optionalDependencies }, parsedLockfile, deps)
-                    }
-                }
-            }
-        }
-        return deps
-    }
-
     log('Using dev:', chalk.cyan(program.dev))
-    const lockfileObject = gen(
+    const lockfileObject = generateLockfileObject(
         { ...inputPackageJson.dependencies, ...(program.dev ? inputPackageJson.devDependencies : {}) },
         inputLockfile.object
     )
+
     if (program.write) {
         const lockWritePath = program.write === true ? 'yarn.lock' : program.write
         const fileExists = fs.existsSync(lockWritePath)
