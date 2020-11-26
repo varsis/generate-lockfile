@@ -6,7 +6,9 @@
   "author": "Chris Pavlicek <chris@vars.is>",
   "license": "MIT",
   "scripts": {
-    "watch": "yarn nodemon --watch \"src/**\" --ext \"ts\" --exec \"ts-node src/index.ts\" -p './package.json' -l './yarn.lock'"
+    "watch": "yarn nodemon --watch \"src/**\" --ext \"ts\" --exec \"ts-node src/entry.ts\" -p './package.json' -l './yarn.lock'",
+    "test": "yarn ts-mocha 'test/**/*.test.ts'",
+    "build": "yarn tsc"
   },
   "bin": {
     "generate-lockfile": "./bin/index.js"
@@ -14,13 +16,14 @@
   "dependencies": {
     "@yarnpkg/lockfile": "^1.1.0",
     "chalk": "^4.1.0",
-    "commander-plus": "^0.0.6",
-    "semver": "^7.3.2"
+    "commander-plus": "^0.0.6"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.14",
     "@types/expect": "^24.3.0",
     "@types/mocha": "^8.0.4",
     "@types/node": "^14.14.9",
+    "chai": "^4.2.0",
     "mocha": "^8.2.1",
     "nodemon": "^2.0.6",
     "ts-mocha": "^8.0.0",

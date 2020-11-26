@@ -2,9 +2,10 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as lock from '@yarnpkg/lockfile'
 import chalk from 'chalk'
-import semver from 'semver'
 import program from 'commander-plus'
 import pkg from '../package.json'
+import { log, setVerbose } from './logger'
+import { generateLockfileObject, getAndParseFiles } from './generator'
 
 program
     .version(pkg.version)
@@ -21,41 +22,10 @@ if (!program.package || !program.lockfile) {
     program.help()
 }
 
-const log = (message?: any, ...optional: any[]) => (program.verbose ? console.debug(message, ...optional) : null)
-
-const generateLockfileObject = (dependencies: { [k: string]: string }, parsedLockfile: object, foundDependencies: object = {}) => {
-    for (const key of Object.keys(dependencies)) {
-        for (const found of Object.keys(parsedLockfile).filter((x) => x.startsWith(key))) {
-            const v = parsedLockfile[found]
-            if (semver.satisfies(v.version, dependencies[key])) {
-                log(chalk.whiteBright('Satisfies version:'), chalk.cyan(key), chalk.blue(v.version), chalk.green(dependencies[key]))
-                const versionKey = `${key}@${dependencies[key]}`
-
-                if (versionKey in foundDependencies) {
-                    log(chalk.yellow('Dependency already resolved'), chalk.blue(versionKey))
-                    // break early
-                    continue
-                }
-
-                foundDependencies[versionKey] = v
-
-                if (v.dependencies || v.optionalDependencies) {
-                    generateLockfileObject({ ...v.dependencies, ...v.optionalDependencies }, parsedLockfile, foundDependencies)
-                }
-            }
-        }
-    }
-    return foundDependencies
-}
+setVerbose(program.verbose)
 
 try {
-    log(chalk.whiteBright('Lockfile:'), chalk.green(program.lockfile))
-    log(chalk.whiteBright('Package.json:'), chalk.green(program.package))
-
-    const lockfileString = fs.readFileSync(path.resolve(program.lockfile), 'utf8')
-    const inputLockfile = lock.parse(lockfileString)
-    const inputPackageJson = JSON.parse(fs.readFileSync(path.resolve(program.package), 'utf8'))
-
+    const { inputLockfile, inputPackageJson } = getAndParseFiles(program.lockfile, program.package)
     log('Using dev:', chalk.cyan(program.dev))
     const lockfileObject = generateLockfileObject(
         { ...inputPackageJson.dependencies, ...(program.dev ? inputPackageJson.devDependencies : {}) },
