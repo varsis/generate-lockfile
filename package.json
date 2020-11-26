@@ -1,6 +1,6 @@
 {
   "name": "generate-lockfile",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "CLI to generate a lockfile from a workspace lockfile and package.json",
   "main": "index.js",
   "author": "Chris Pavlicek <chris@vars.is>",
@@ -13,7 +13,7 @@
     "pub": "yarn build && yarn publish"
   },
   "bin": {
-    "generate-lockfile": "index.js"
+    "generate-lockfile": "./bin/index.js"
   },
   "dependencies": {
     "@yarnpkg/lockfile": "^1.1.0",
