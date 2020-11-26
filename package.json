@@ -1,6 +1,6 @@
 {
   "name": "generate-lockfile",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "CLI to generate a lockfile from a workspace lockfile and package.json",
   "main": "index.js",
   "author": "Chris Pavlicek <chris@vars.is>",
@@ -9,8 +9,8 @@
     "watch": "yarn nodemon --watch \"src/**\" --ext \"ts\" --exec \"ts-node src/entry.ts\" -p './package.json' -l './yarn.lock'",
     "test": "yarn ts-mocha 'test/**/*.test.ts'",
     "build": "rm -rf ./bin/src && yarn tsc",
-    "pack": "yarn build && cd bin && yarn pack",
-    "publish": "yarn build && cd bin && yarn publish"
+    "package": "yarn build && yarn pack",
+    "prepublish": "yarn build"
   },
   "bin": {
     "generate-lockfile": "index.js"
