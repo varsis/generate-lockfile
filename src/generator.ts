@@ -25,7 +25,7 @@ const getDependencyKey = (key: string, version: string) => `${key}@${version}`
 export const generateLockfileObject = (
     dependencies: { [k: string]: string },
     parsedLockfile: IParsedLockfile,
-    foundDependencies: object = {}
+    foundDependencies: Record<string, IPackageDetails> = {}
 ) => {
     for (const key of Object.keys(dependencies)) {
         const version = dependencies[key]
