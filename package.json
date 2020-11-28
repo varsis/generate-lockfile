@@ -1,6 +1,6 @@
 {
   "name": "generate-lockfile",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "CLI to generate a lockfile from a workspace lockfile and package.json",
   "main": "index.js",
   "author": "Chris Pavlicek <chris@vars.is>",
