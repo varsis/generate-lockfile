@@ -1,5 +1,4 @@
 # Generate Lockfile
----
 
 ### Description
 This package allows you to generate a new yarn.lock file from an existing yarn.lock file and 
