@@ -1,6 +1,6 @@
 {
   "name": "generate-lockfile",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "CLI to generate a lockfile from a workspace lockfile and package.json",
   "main": "index.js",
   "author": "Chris Pavlicek <chris@vars.is>",
@@ -13,6 +13,10 @@
     "test:lint": "eslint src --ext .ts",
     "test:prettier": "prettier \"src/**/*.ts\" --list-different",
     "pub": "yarn build && yarn publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/varsis/generate-lockfile.git"
   },
   "bin": {
     "generate-lockfile": "./bin/index.js"
