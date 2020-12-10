@@ -9,16 +9,29 @@ import { generateLockfileObject, getAndParseFiles } from './generator'
 
 program
     .version(pkg.version)
-    .option('-v, --verbose', 'Log details')
-    .option('-f, --force', 'Overwrite lockfile')
+    .usage('--package <package> --lockfile <lockfile> [options]')
+    .option('-p, --package <package>', 'package.json path')
+    .option('-l, --lockfile <lockfile>', 'yarn.lock path')
+    .option('-v, --verbose [verbose]', 'Log details')
+    .option('-f, --force [force]', 'Overwrite lockfile')
     .option('-d, --dev [dev]', 'Include devDependencies', false)
     .option('-w, --write [write]', 'Write lockfile')
-    .option('-p, --package [package]', 'package.json path')
-    .option('-l, --lockfile [lockfile]', 'yarn.lock path')
     .parse(process.argv)
 
-// Check for args
-if (!program.package || !program.lockfile) {
+let missingRequiredArg = false
+const printMissingArg = (details: string) => console.error(chalk.red('Missing argument:'), details)
+
+if (!program.package) {
+    printMissingArg('-p --package <package>')
+    missingRequiredArg = true
+}
+
+if (!program.lockfile) {
+    printMissingArg('-l --lockfile <lockfile>')
+    missingRequiredArg = true
+}
+
+if (missingRequiredArg) {
     program.help()
 }
 
