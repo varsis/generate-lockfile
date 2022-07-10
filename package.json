@@ -18,11 +18,11 @@
     "type": "git",
     "url": "https://github.com/varsis/generate-lockfile.git"
   },
-  "bin": {
-    "generate-lockfile": "./bin/index.js"
-  },
+  "bin": "./bin/index.js",
   "dependencies": {
+    "@yarnpkg/core": "3.2.2",
     "@yarnpkg/lockfile": "^1.1.0",
+    "@yarnpkg/parsers": "2.5.1",
     "chalk": "^4.1.0",
     "commander-plus": "^0.0.6"
   },
@@ -47,5 +47,6 @@
   "files": [
     "LICENSE",
     "bin/**/*"
-  ]
+  ],
+  "packageManager": "yarn@3.2.1"
 }
