@@ -1,4 +1,4 @@
-let _verbose = false
+let _verbose = true
 export const setVerbose = (verbose: boolean) => (_verbose = verbose)
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
